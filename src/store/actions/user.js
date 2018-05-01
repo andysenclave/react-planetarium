@@ -1,26 +1,44 @@
-import { SEARCH_PLANETS } from './action.types';
+import axios from 'axios';
+import { USER_LOGIN, USER_LOGOUT } from './action.types';
+import { config } from '../../config/app.config';
 
-const planetsUri = '/api/planets';
+const { masterUser, peopleUri } = config;
 
-export const searchPlanets = () => dispatch => {
-  return fetch(productListUri)
-    .then(res => res.json())
-    .then(products => dispatch({type: GET_PRODUCTS, payload: products}))
-}
+export const loginUser = ({ username, password }) => {
+  const resource = `${peopleUri}?search=${username}`;
+  return async (dispatch, getState) => {
+    let user = getState().user;
+    let successLogin = false;
 
-export const showProducts = (id) => (dispatch, getState) => {
-  console.log(getState(), 'sup?');
-  return {
-    type: SHOW_PRODUCTS
+    try {
+      const response = await axios.get(resource);
+      let loginUser = await response.data.results;
+
+      if(loginUser.constructor === Array) {
+        const { name, birth_year,   } = loginUser[0];
+        if(name === username && birth_year === password) {
+          user = {
+            name,
+            masterAccess: name === masterUser,
+            loggedIn: true
+          };
+          successLogin = true;
+        }
+      }
+    } catch (e) {
+      console.error("something went wrong : ", e);
+    } finally {
+      dispatch({
+        type: USER_LOGIN,
+        payload: user
+      });
+      return successLogin;
+    }
   };
-}
+};
 
-export const findProduct = (id) => (dispatch, getState) => {
-  const { products } = getState();
-  const matchedItem = products.list.find(product => (product._id === id ? product : null));
-  
-  return dispatch({
-    type: FIND_PRODUCT,
-    payload: matchedItem
+export const logoutUser = () => (dispatch) => {
+  dispatch({
+    type: USER_LOGOUT
   });
-}
+}; 

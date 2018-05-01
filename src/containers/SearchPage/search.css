@@ -1,19 +1,33 @@
-
+.app {
+  text-align: center;
+}
 
 .app .app-header {
   background-color: #222;
-  height: 150px;
+  height: 80vh;
   padding: 20px;
+  transition: 0.3s all ease;
   color: white;
+}
+.app .app-header.folded {
+  height: 15vh;
+}
+.app-header .text-content{
+  height: 60vh;
+  overflow: hidden;
+  transition: 0.3s all ease;  
+}
+.app-header .text-content.folded {
+  height: 0vh !important;
 }
 
 .app-header .logo {
   animation: app-logo-spin infinite 20s linear;
-  height: 80px;
+  height: 35vh;
 }
 
 .app-header .app-title {
-  font-size: 1.5em;
+  font-size: 2.5em;
 }
 
 .app-header .app-intro {
