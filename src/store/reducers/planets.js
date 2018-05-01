@@ -1,9 +1,9 @@
-import { SEARCH_PLANETS } from '../actions/action.types';
+import { UPDATE_PLANETS } from '../actions/action.types';
 const initialState = [];
 
 const planetsReducer = (state = initialState, { type, payload }) => {
   switch(type) {
-    case SEARCH_PLANETS:
+    case UPDATE_PLANETS:
       return payload;
     default:
       return state;

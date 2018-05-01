@@ -1,0 +1,15 @@
+input.at-center {
+  width: 230px;
+  height: 30px;
+  border: none;
+  font-size: 1.2em;
+  margin-top: 5vh;
+  padding: 5px;
+  transition: 0.3s all ease;  
+}
+input.at-center:focus {
+  outline: none;
+}
+input.at-center.expanded {
+  width: 80vw;
+}

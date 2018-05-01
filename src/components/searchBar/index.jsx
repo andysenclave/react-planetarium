@@ -1,25 +1,24 @@
 import React from 'react';
 
-const searchBar = ({ type = 'center', onChange = () => {}, onClick = () => {} }) => {
-  const renderTypes = {
-    'center': renderAtCenter,
-    'top': renderLargeOnTop
-  };
-  const InputSearchField = renderTypes[type];
-  
-  return(<InputSearchField />);
-};
+import './searchBar.css';
 
-const renderAtCenter = () => {
-  return(
-    <input type="text" render-at="center"/>
+const searchBar = ({ 
+  className = '',
+  value = '', 
+  onChange = e => console.log(e),
+  onClick = e => console.log(e),
+  onBlur = e => console.log(e),
+}) => {
+  return (
+    <input 
+      type="text" 
+      className={`${className} at-center`}
+      value={value}
+      placeholder="Search your planet"
+      onChange={(e) => { onChange(e.target.value) }}
+      onClick={(e) => { onClick(e) }}
+      onBlur={(e) => { onBlur(e) }}
+    />
   );
 }
-
-const renderLargeOnTop = () => {
-  return(
-    <input type="text" render-at="top"/>
-  );
-}
-
 export default searchBar;

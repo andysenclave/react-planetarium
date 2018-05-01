@@ -1,53 +1,42 @@
-import axios from 'axios';
-import { SEARCH_PLANETS } from './action.types';
+import { UPDATE_PLANETS } from './action.types';
+import { config } from '../../config/app.config';
 
-const planetsUri = '/api/planets';
-const radii = {
-  max: 500,
-  min: 50
-};
+const { radii } = config;
 
-export const searchPlanets = (name) => {
-  const resource = `${planetsUri}?search=${name}`;
-
-  return async (dispatch) => {
-    let planets = [];
-    try {
-      const response = await axios.get(resource);
-      planets = await response.data.results;
-      if(typeof planets === 'object' && planets.length) {
-        planets = await updatePlanets(planets);
-      }
-    } catch (e) {
-      console.error("something went wrong : ", e);
-    } finally {
-      dispatch({
-        type: SEARCH_PLANETS,
-        payload: planets
-      });
-    }
-  };
-}
-
-// finding a rescaled value to resize component using formula
+// calculating a scaled radius to resize component using the following formula
 //        (b-a)(x - min)
 // f(x) = --------------  + a
 //          max - min
 
-const updatePlanets = (planets) => {
+export const updatePlanets = (planets) => {
+  console.log("planets updated");
   const { max, min } = getPopulationRange(planets);
-  return planets.map(planet => {
-    let population = planet.population ? parseInt(planet.population, 10) : 0;
-    const radius = (((radii.max - radii.min) * (population - min)) / (max - min)) + radii.min;
-    return { radius, ...planet };
-  });
+  
+  let updatedPlanets = [];
+  if(planets.length > 0) {
+    updatedPlanets = planets.map(planet => {
+      let population = planet.population ? parseInt(planet.population, 10) : 0;
+      const radius = (((radii.max - radii.min) * (population - min)) / (max - min)) + radii.min;
+      return { radius, ...planet };
+    });
+  }
+
+  return (dispatch) => {
+    dispatch({
+      type: UPDATE_PLANETS,
+      payload: updatedPlanets
+    });
+  };
 }
 
 const getPopulationRange = (planets) => {
-  const initialRange = {
-    max: planets[0].population || 0,
-    min: planets[0].population || 0,
-  };
+  let initialRange = { max: 0, min: 0 };
+  if(planets.length > 0) {
+    initialRange = {
+      max: planets[0].population,
+      min: planets[0].population      
+    }
+  }
   const range = planets.reduce((range, planet) => {
     let population = planet.population ? parseInt(planet.population, 10) : 0;
     if(range.max < population) range.max = population;
